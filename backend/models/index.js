@@ -4,7 +4,6 @@ const Fruta = require("./Fruta");
 const Venda = require("./Venda");
 const ItemVenda = require("./ItemVenda");
 
-// Relacionamentos
 Usuario.hasMany(Venda, { foreignKey: "usuarioId" });
 Venda.belongsTo(Usuario, { foreignKey: "usuarioId" });
 

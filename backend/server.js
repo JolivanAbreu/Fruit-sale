@@ -5,6 +5,7 @@ const bodyParser = require("body-parser");
 const sequelize = require("./config/database");
 const routes = require("./routes");
 const usuarioRoutes = require("./routes/usuarioRoutes");
+const vendaRoutes = require("./routes/vendaRoutes");
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(bodyParser.json());
 
 app.use("/api", routes);
 app.use("/usuarios", usuarioRoutes);
+app.use("/venda", vendaRoutes);
 //app.use("/vendedores", usuarioRoutes);
 
 app.get("/", (req, res) => {
@@ -24,16 +26,16 @@ const PORT = process.env.PORT || 3000;
 async function startServer() {
     try {
         await sequelize.authenticate();
-        console.log("✅ Banco de dados conectado!");
+        console.log("Banco de dados conectado!");
 
         await sequelize.sync({ force: false });
-        console.log("✅ Banco de dados sincronizado!");
+        console.log("Banco de dados sincronizado!");
 
         app.listen(PORT, () => {
-            console.log(`🚀 Servidor rodando na porta ${PORT}`);
+            console.log(`Servidor rodando na porta ${PORT}`);
         });
     } catch (error) {
-        console.error("❌ Erro ao conectar ao banco de dados:", error);
+        console.error("Erro ao conectar ao banco de dados:", error);
         process.exit(1);
     }
 }

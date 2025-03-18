@@ -18,7 +18,7 @@ const validarCampos = (req, res, next) => {
   next();
 };
 
-// CADASTRO DE USUÁRIO
+// Cadastro de usuários
 router.post("/", validarCampos, async (req, res) => {
   const { nome, email, senha, perfil } = req.body;
   try {
@@ -35,9 +35,9 @@ router.post("/", validarCampos, async (req, res) => {
     res.status(500).json({ error: "Erro ao cadastrar usuário." });
   }
 });
-// CADASTRO DE USUÁRIO
+// Cadastro de usuários
 
-// LOGIN DE USUÁRIO
+// Login de usuários
 router.post("/login", async (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) {
@@ -62,22 +62,9 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Erro ao realizar login." });
   }
 });
-// LOGIN DE USUÁRIO
-
-// LISTAGEM DE USUÁRIOS
-/* router.get("/", async (req, res) => {
-  try {
-    const usuarios = await Usuario.findAll();
-    res.json(usuarios);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Erro ao listar usuários." });
-  }
-}); */
-// LISTAGEM DE USUÁRIO
 
 
-// BUSCA DE VENDEDORES
+// Busca de vendedores
 router.get("/vendedores", async (req, res) => {
   try {
     const vendedores = await Usuario.findAll({ where: { perfil: "Vendedor" } });

@@ -5,7 +5,7 @@ const Venda = require("../models/Venda");
 const Usuario = require("../models/Usuario");
 
 // Registrar uma venda
-router.post("/", async (req, res) => {
+router.post("/registro", async (req, res) => {
   try {
     const { vendedor_id, valor_total } = req.body;
 
@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
 });
 
 // Listar todas as vendas
-router.get("/", async (req, res) => {
+router.get("/listagem", async (req, res) => {
   try {
     const vendas = await Venda.findAll();
     res.json(vendas);
@@ -31,7 +31,7 @@ router.get("/", async (req, res) => {
 });
 
 // Registrar venda
-router.post("/vendas", async (req, res) => {
+router.post("/registro", async (req, res) => {
   try {
     const { frutaId, quantidade, desconto, valor_total, vendedor_id } = req.body;
 
@@ -73,5 +73,27 @@ router.post("/vendas", async (req, res) => {
     res.status(500).json({ error: "Erro ao registrar venda." });
   }
 });
+
+/* router.post("/vendas", async (req, res) => {
+  try {
+    const { frutaId, quantidade, desconto } = req.body;
+    const fruta = await Fruta.findByPk(frutaId);
+
+    if (!fruta) {
+      return res.status(404).json({ error: "Lamento, fruta não encontrada." });
+    }
+
+    if (fruta.quantidade < quantidade) {
+      return res.status(400).json({ error: "Estoque insuficiente." });
+    }
+
+    fruta.quantidade -= quantidade;
+    await fruta.save();
+
+    res.json({ message: "Venda realizada com sucesso!", frutaAtualizada: fruta });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao registrar venda." });
+  }
+}); */
 
 module.exports = router;

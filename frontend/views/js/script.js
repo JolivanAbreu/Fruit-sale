@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function () {
     carregarVendedores();
 });
 
-// VERIFICAÇÃO DE ACESSO
+// Verificação de acesso
 function verificarAcesso() {
     const perfil = localStorage.getItem("perfil");
     const token = localStorage.getItem("token");
@@ -28,9 +28,9 @@ function verificarAcesso() {
         window.location.href = "index.html";
     }
 }
-// VERIFICAÇÃO DE ACESSO
+// Verificação de acesso
 
-// CONFIGURAÇÃO DE LOGIN
+// Configuração de Lofin
 function configurarLogin() {
     const formLogin = document.getElementById("loginForm");
     if (!formLogin) return;
@@ -63,9 +63,9 @@ function configurarLogin() {
         }
     });
 }
-// CONFIGURAÇÃO DE LOGIN
+// Configuração de Login
 
-// CONFIGURAÇÃO DE CADASTRO DE FRUTAS
+// Cadastro de frutas no sistema
 function configurarCadastroFrutas() {
     const formCadastro = document.getElementById("cadastroFruta");
     if (!formCadastro) return;
@@ -97,64 +97,9 @@ function configurarCadastroFrutas() {
 
     });
 }
-// CONFIGURAÇÃO DE CADASTRO DE FRUTA
+// Cadastro de frutas no sistema
 
-// CONFIGURAÇÃO DE VENDA DE FRUTAS
-function configurarVendaFrutas() {
-    const vendaForm = document.getElementById("vendaForm");
-    if (!vendaForm) return;
-
-    carregarFrutas();
-    carregarVendedores();
-
-    vendaForm.addEventListener("submit", async function (event) {
-        event.preventDefault();
-
-        const frutaSelecionada = JSON.parse(document.getElementById("listaFrutas").value);
-        const vendedor_id = document.getElementById("listaVendedores").value;
-        const quantidade = parseInt(document.getElementById("quantidadeVenda").value);
-        const desconto = parseInt(document.getElementById("desconto").value);
-
-        if (!frutaSelecionada || !frutaSelecionada.id) {
-            alert("Por favor, selecione uma fruta.");
-            return;
-        }
-
-        if (!vendedor_id) {
-            alert("Por favor, selecione um vendedor.");
-            return;
-        }
-
-        let valor_total = frutaSelecionada.valor * quantidade;
-        valor_total -= (valor_total * desconto) / 100;
-
-        const response = await fetch("http://localhost:3000/api/vendas", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                frutaId: frutaSelecionada.id,
-                quantidade,
-                desconto,
-                valor_total,
-                vendedor_id
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert("Venda realizada com sucesso!");
-            vendaForm.reset();
-            carregarFrutas();
-        } else {
-            alert("Erro na venda: " + data.error);
-        }
-
-    });
-}
-// CONFIGURAÇÃO DE VENDA DE FRUTAS
-
-//  CONFIGURAÇÃO DE CARREGAR FRUTAS
+// carregar frutas no sistema
 async function carregarFrutas() {
     const listaFrutas = document.getElementById("listaFrutas");
     if (!listaFrutas) return;
@@ -176,9 +121,9 @@ async function carregarFrutas() {
         alert("Erro ao carregar frutas.");
     }
 }
-// CONFIGURAÇÃO DE CARREGAR FRUTAS
+// carregar frutar no sistema
 
-// CONFIGURAÇÃO DE CARREGAR VENDEDORES
+// carregar os vendedors no painel de vendas
 async function carregarVendedores() {
     const listarVendedores = document.getElementById("listaVendedores");
     if (!listarVendedores) return;
@@ -191,7 +136,7 @@ async function carregarVendedores() {
 
         vendedores.forEach(vendedor => {
             const option = document.createElement("option");
-            option.value = JSON.stringify({ id: vendedor.id, name: vendedor.nome});
+            option.value = JSON.stringify({ id: vendedor.id, name: vendedor.nome });
             option.textContent = `${vendedor.nome} - ${vendedor.email}`;
             listarVendedores.appendChild(option);
         });
@@ -200,3 +145,63 @@ async function carregarVendedores() {
         alert("Erro ao carregar vendedores.");
     }
 }
+// carregar os vendedors no painel de vendas
+
+// Sistema de vendas
+function configurarVendaFrutas() {
+    const vendaForm = document.getElementById("vendaForm");
+    if (!vendaForm) return;
+
+    carregarFrutas();
+    carregarVendedores();
+
+    vendaForm.addEventListener("submit", async function (event) {
+        event.preventDefault();
+
+        const frutaSelecionada = JSON.parse(document.getElementById("listaFrutas").value);
+        const vendedor_id = document.getElementById("listaVendedores").value;
+        const quantidade = parseInt(document.getElementById("quantidadeVenda").value);
+        const desconto = parseInt(document.getElementById("desconto").value);
+
+        if (!frutaSelecionada || !frutaSelecionada.id) {
+            alert("Selecione uma fruta.");
+            return;
+        }
+
+        if (!vendedor_id) {
+            alert("Selecione um vendedor.");
+            return;
+        }
+
+        let valor_total = frutaSelecionada.valor * quantidade;
+        valor_total -= (valor_total * desconto) / 100;
+
+        try {
+            const response = await fetch("http://localhost:3000/venda/registro", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    frutaId: frutaSelecionada.id,
+                    quantidade,
+                    desconto,
+                    valor_total,
+                    vendedor_id
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert("Venda realizada com sucesso!");
+                vendaForm.reset();
+                carregarFrutas();
+            } else {
+                alert("Erro na venda: " + data.error);
+            }
+        } catch (error) {
+            console.error("Erro ao enviar venda:", error);
+            alert("Erro ao conectar ao servidor.");
+        }
+    });
+}
+// Sistema de vendas
