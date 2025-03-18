@@ -1,5 +1,5 @@
 const { DataTypes } = require("sequelize");
-const sequelize = require("../config/database"); // Importa a configuração do banco
+const sequelize = require("../config/database");
 
 const Usuario = sequelize.define("Usuario", {
   nome: {
@@ -20,7 +20,7 @@ const Usuario = sequelize.define("Usuario", {
     allowNull: false,
   }
 }, {
-  timestamps: false // Desativa os campos createdAt e updatedAt
+  timestamps: false
 });
 
 module.exports = Usuario;

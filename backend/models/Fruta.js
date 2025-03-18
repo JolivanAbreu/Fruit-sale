@@ -4,20 +4,20 @@ const sequelize = require("../config/database");
 const Fruta = sequelize.define("Fruta", {
   id: {
     type: DataTypes.INTEGER,
-    primaryKey: true,
     autoIncrement: true,
+    primaryKey: true,
   },
   nome: {
     type: DataTypes.STRING,
     allowNull: false,
   },
   classificacao: {
-    type: DataTypes.ENUM("Extra", "Primeira", "Segunda", "Terceira"),
+    type: DataTypes.STRING,
     allowNull: false,
   },
   fresca: {
     type: DataTypes.BOOLEAN,
-    allowNull: false,
+    defaultValue: true,
   },
   quantidade: {
     type: DataTypes.INTEGER,
@@ -27,6 +27,9 @@ const Fruta = sequelize.define("Fruta", {
     type: DataTypes.FLOAT,
     allowNull: false,
   },
+}, {
+  tableName: "frutas",
+  timestamps: false,
 });
 
 module.exports = Fruta;

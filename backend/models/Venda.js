@@ -7,8 +7,8 @@ const Venda = sequelize.define("Venda", {
   data_hora: { type: DataTypes.DATE, allowNull: false, defaultValue: DataTypes.NOW },
   valor_total: { type: DataTypes.FLOAT, allowNull: false },
 }, {
-  tableName: "vendas", // Nome da tabela no banco de dados
-  timestamps: false // Evita colunas createdAt e updatedAt
+  tableName: "vendas",
+  timestamps: false
 });
 
 module.exports = Venda;

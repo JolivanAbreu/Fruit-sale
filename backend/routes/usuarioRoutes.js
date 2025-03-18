@@ -1,7 +1,7 @@
 const express = require("express");
-const Usuario = require("../models/Usuario"); // Importando o model do Sequelize
+const Usuario = require("../models/Usuario");
 const router = express.Router();
-const SECRET_KEY = "seuSegredoSuperSeguro"; // Troque por variável de ambiente
+const SECRET_KEY = "seuSegredoSuperSeguro";
 
 // Criar um usuário (Administrador ou Vendedor)
 router.post("/", async (req, res) => {
@@ -43,28 +43,37 @@ router.post("/login", async (req, res) => {
   }
 
   try {
-    // Busca o usuário pelo e-mail
     const usuario = await Usuario.findOne({ where: { email } });
 
     if (!usuario) {
       return res.status(400).json({ error: "Usuário não encontrado." });
     }
 
-    // Verifica a senha
     const senhaCorreta = await bcrypt.compare(senha, usuario.senha);
     if (!senhaCorreta) {
       return res.status(400).json({ error: "Senha incorreta." });
     }
 
-    // Gera um token JWT
-    const token = jwt.sign({ id: usuario.id, perfil: usuario.perfil }, SECRET_KEY, {
-      expiresIn: "2h",
+    res.json({
+      message: "Login realizado com sucesso",
+      token,
+      perfil: usuario.perfil
     });
-
-    res.json({ message: "Login realizado com sucesso", token });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Erro ao realizar login." });
+  }
+});
+
+
+// Listar todos os usuários
+router.get("/", async (req, res) => {
+  try {
+    const usuarios = await Usuario.findAll();
+    res.json(usuarios);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Erro ao listar usuários." });
   }
 });
 

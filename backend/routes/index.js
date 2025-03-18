@@ -2,7 +2,6 @@ const express = require("express");
 
 const router = express.Router();
 
-// Importação das rotas individuais
 const frutaRoutes = require("./frutaRoutes");
 const usuarioRoutes = require("./usuarioRoutes");
 const vendaRoutes = require("./vendaRoutes");
