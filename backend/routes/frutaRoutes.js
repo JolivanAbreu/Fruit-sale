@@ -2,7 +2,6 @@ const express = require("express");
 const router = express.Router();
 const Fruta = require("../models/Fruta");
 
-// Lista todas as frutas
 router.get("/", async (req, res) => {
   try {
     const frutas = await Fruta.findAll();
@@ -12,7 +11,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-// Adicionar uma nova fruta
 router.post("/", async (req, res) => {
   try {
     const { nome, classificacao, fresca, quantidade, valor } = req.body;
@@ -23,13 +21,34 @@ router.post("/", async (req, res) => {
   }
 });
 
-// Atualizar uma fruta
-router.put("/:id", async (req, res) => {
+router.post("/vendas", async (req, res) => {
+  try {
+    const { frutaId, quantidade, desconto } = req.body;
+    const fruta = await Fruta.findByPk(frutaId);
+
+    if (!fruta) {
+      return res.status(404).json({ error: "Lamento, fruta não encontrada." });
+    }
+
+    if (fruta.quantidade < quantidade) {
+      return res.status(400).json({ error: "Estoque insuficiente." });
+    }
+
+    fruta.quantidade -= quantidade;
+    await fruta.save();
+
+    res.json({ message: "Venda realizada com sucesso!", frutaAtualizada: fruta });
+  } catch (error) {
+    res.status(500).json({ error: "Erro ao registrar venda." });
+  }
+});
+
+/* router.put("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const { nome, classificacao, fresca, quantidade, valor } = req.body;
     const fruta = await Fruta.findByPk(id);
-    
+
     if (!fruta) {
       return res.status(404).json({ error: "Fruta não encontrada" });
     }
@@ -39,10 +58,9 @@ router.put("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Erro ao atualizar fruta" });
   }
-});
+}); */
 
-// Deletar uma fruta
-router.delete("/:id", async (req, res) => {
+/* router.delete("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const fruta = await Fruta.findByPk(id);
@@ -56,6 +74,7 @@ router.delete("/:id", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: "Erro ao deletar fruta" });
   }
-});
+}); */
+
 
 module.exports = router;
