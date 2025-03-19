@@ -1,5 +1,7 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../config/database");
+const Venda = require("./Venda");
+const Fruta = require("./Fruta");
 
 const ItensVenda = sequelize.define("ItensVenda", {
     venda_id: {
@@ -27,5 +29,10 @@ const ItensVenda = sequelize.define("ItensVenda", {
 }, {
     timestamps: false
 });
+
+ItensVenda.associate = (models) => {
+    ItensVenda.belongsTo(models.Venda, { foreignKey: "venda_id", as: "Venda" });
+    ItensVenda.belongsTo(models.Fruta, { foreignKey: "fruta_id", as: "Fruta" });
+};
 
 module.exports = ItensVenda;

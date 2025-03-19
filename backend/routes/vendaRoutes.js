@@ -60,7 +60,7 @@ router.post("/registro", async (req, res) => {
 
       res.json({ message: "Venda realizada com sucesso!", venda });
     } catch (error) {
-      
+
       await transaction.rollback();
       console.error("Erro durante a transação:", error);
       throw error;
@@ -70,5 +70,44 @@ router.post("/registro", async (req, res) => {
     res.status(500).json({ error: "Erro ao registrar venda.", detalhes: error.message });
   }
 });
+
+
+router.get("/listar", async (req, res) => {
+  try {
+    const vendas = await Venda.findAll({
+      include: [
+        {
+          model: ItensVenda,
+          as: "ItensVenda",
+          include: [{ model: Fruta, as: "Fruta", attributes: ["nome"] }],
+        },
+        {
+          model: Usuario,
+          as: "Usuario",
+          attributes: ["nome"],
+        },
+      ],
+      order: [["data_hora", "DESC"]],
+    });
+
+    const vendasFormatadas = vendas.map((venda) => {
+      const itemVenda = venda.ItensVenda?.length ? venda.ItensVenda[0] : null;
+      return {
+        id: venda.id,
+        fruta: itemVenda ? itemVenda.Fruta?.nome || "N/A" : "N/A",
+        quantidade: itemVenda ? itemVenda.quantidade : 0,
+        desconto: itemVenda ? itemVenda.desconto : 0,
+        valor_final: venda.valor_total,
+        data_hora: venda.data_hora,
+      };
+    });
+
+    res.json(vendasFormatadas);
+  } catch (error) {
+    console.error("Erro ao buscar vendas:", error);
+    res.status(500).json({ error: "Erro ao buscar vendas.", detalhes: error.message });
+  }
+});
+
 
 module.exports = router;

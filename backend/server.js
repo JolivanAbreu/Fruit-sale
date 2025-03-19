@@ -7,6 +7,14 @@ const routes = require("./routes");
 const usuarioRoutes = require("./routes/usuarioRoutes");
 const vendaRoutes = require("./routes/vendaRoutes");
 
+const Venda = require("./models/Venda");
+const ItensVenda = require("./models/ItensVenda");
+const Fruta = require("./models/Fruta");
+const Usuario = require("./models/Usuario");
+
+Venda.associate({ ItensVenda, Usuario });
+ItensVenda.associate({ Venda, Fruta });
+
 const app = express();
 
 app.use(cors());
