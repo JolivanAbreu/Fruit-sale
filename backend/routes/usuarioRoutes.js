@@ -18,7 +18,6 @@ const validarCampos = (req, res, next) => {
   next();
 };
 
-// Cadastro de usuários
 router.post("/", validarCampos, async (req, res) => {
   const { nome, email, senha, perfil } = req.body;
   try {
@@ -35,9 +34,7 @@ router.post("/", validarCampos, async (req, res) => {
     res.status(500).json({ error: "Erro ao cadastrar usuário." });
   }
 });
-// Cadastro de usuários
 
-// Login de usuários
 router.post("/login", async (req, res) => {
   const { email, senha } = req.body;
   if (!email || !senha) {
@@ -62,9 +59,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Erro ao realizar login." });
   }
 });
-// Login de usuários
 
-// Busca de vendedores
 router.get("/vendedores", async (req, res) => {
   try {
     const vendedores = await Usuario.findAll({ where: { perfil: "Vendedor" } });
@@ -81,6 +76,5 @@ router.get("/vendedores", async (req, res) => {
     res.status(500).json({ error: "Erro interno no servidor." });
   }
 });
-// Busca de vendedores
 
 module.exports = router;

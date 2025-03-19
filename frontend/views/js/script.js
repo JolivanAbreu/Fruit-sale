@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function () {
     carregarVendedores();
 });
 
-// Verificação de acesso
 function verificarAcesso() {
     const perfil = localStorage.getItem("perfil");
     const token = localStorage.getItem("token");
@@ -28,9 +27,7 @@ function verificarAcesso() {
         window.location.href = "index.html";
     }
 }
-// Verificação de acesso
 
-// Configuração de Lofin
 function configurarLogin() {
     const formLogin = document.getElementById("loginForm");
     if (!formLogin) return;
@@ -63,9 +60,7 @@ function configurarLogin() {
         }
     });
 }
-// Configuração de Login
 
-// Cadastro de frutas no sistema
 function configurarCadastroFrutas() {
     const formCadastro = document.getElementById("cadastroFruta");
     if (!formCadastro) return;
@@ -97,9 +92,7 @@ function configurarCadastroFrutas() {
 
     });
 }
-// Cadastro de frutas no sistema
 
-// carregar frutas no sistema
 async function carregarFrutas() {
     const listaFrutas = document.getElementById("listaFrutas");
     if (!listaFrutas) return;
@@ -121,9 +114,7 @@ async function carregarFrutas() {
         alert("Erro ao carregar frutas.");
     }
 }
-// carregar frutar no sistema
 
-// carregar os vendedors no painel de vendas
 async function carregarVendedores() {
     const listarVendedores = document.getElementById("listaVendedores");
     if (!listarVendedores) return;
@@ -145,9 +136,7 @@ async function carregarVendedores() {
         alert("Erro ao carregar vendedores.");
     }
 }
-// carregar os vendedors no painel de vendas
 
-// Sistema de vendas
 async function configurarVendaFrutas() {
     const vendaForm = document.getElementById("vendaForm");
     if (!vendaForm) return;
@@ -216,5 +205,3 @@ async function configurarVendaFrutas() {
         }
     });
 }
-
-// Sistema de vendas
