@@ -62,7 +62,7 @@ router.post("/login", async (req, res) => {
     res.status(500).json({ error: "Erro ao realizar login." });
   }
 });
-
+// Login de usuários
 
 // Busca de vendedores
 router.get("/vendedores", async (req, res) => {
@@ -81,5 +81,6 @@ router.get("/vendedores", async (req, res) => {
     res.status(500).json({ error: "Erro interno no servidor." });
   }
 });
+// Busca de vendedores
 
 module.exports = router;

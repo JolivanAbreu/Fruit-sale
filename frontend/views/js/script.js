@@ -148,7 +148,7 @@ async function carregarVendedores() {
 // carregar os vendedors no painel de vendas
 
 // Sistema de vendas
-function configurarVendaFrutas() {
+async function configurarVendaFrutas() {
     const vendaForm = document.getElementById("vendaForm");
     if (!vendaForm) return;
 
@@ -159,34 +159,46 @@ function configurarVendaFrutas() {
         event.preventDefault();
 
         const frutaSelecionada = JSON.parse(document.getElementById("listaFrutas").value);
-        const vendedor_id = document.getElementById("listaVendedores").value;
-        const quantidade = parseInt(document.getElementById("quantidadeVenda").value);
-        const desconto = parseInt(document.getElementById("desconto").value);
+        const vendedorSelecionado = JSON.parse(document.getElementById("listaVendedores").value);
+        const vendedor_id = vendedorSelecionado.id;
+        console.log("Valor capturado do select:", document.getElementById("listaVendedores").value);
+        console.log("ID do vendedor como número:", vendedor_id);
+        const quantidade = parseInt(document.getElementById("quantidadeVenda").value, 10);
+        const desconto = parseFloat(document.getElementById("desconto").value) || 0;
 
         if (!frutaSelecionada || !frutaSelecionada.id) {
             alert("Selecione uma fruta.");
             return;
         }
 
-        if (!vendedor_id) {
-            alert("Selecione um vendedor.");
+        if (!vendedor_id || isNaN(vendedor_id)) {
+            alert("Selecione um vendedor válido.");
+            return;
+        }
+
+        if (isNaN(quantidade) || quantidade <= 0) {
+            alert("Quantidade inválida.");
             return;
         }
 
         let valor_total = frutaSelecionada.valor * quantidade;
         valor_total -= (valor_total * desconto) / 100;
 
+        const body = {
+            frutaId: frutaSelecionada.id,
+            quantidade,
+            desconto,
+            valor_total,
+            vendedor_id
+        };
+
+        console.log("Dados enviados para o backend:", body);
+
         try {
             const response = await fetch("http://localhost:3000/venda/registro", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    frutaId: frutaSelecionada.id,
-                    quantidade,
-                    desconto,
-                    valor_total,
-                    vendedor_id
-                })
+                body: JSON.stringify(body)
             });
 
             const data = await response.json();
@@ -204,4 +216,5 @@ function configurarVendaFrutas() {
         }
     });
 }
+
 // Sistema de vendas

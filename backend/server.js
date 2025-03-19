@@ -15,11 +15,6 @@ app.use(bodyParser.json());
 app.use("/api", routes);
 app.use("/usuarios", usuarioRoutes);
 app.use("/venda", vendaRoutes);
-//app.use("/vendedores", usuarioRoutes);
-
-app.get("/", (req, res) => {
-    res.send("API de Vendas de Frutas funcionando!");
-});
 
 const PORT = process.env.PORT || 3000;
 

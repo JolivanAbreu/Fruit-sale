@@ -3,97 +3,72 @@ const router = express.Router();
 const Fruta = require("../models/Fruta");
 const Venda = require("../models/Venda");
 const Usuario = require("../models/Usuario");
+const ItensVenda = require("../models/ItensVenda");
+const sequelize = require("../config/database");
 
-// Registrar uma venda
 router.post("/registro", async (req, res) => {
   try {
-    const { vendedor_id, valor_total } = req.body;
+    console.log("Dados recebidos no backend:", req.body);
+    console.log("Vendedor ID recebido:", req.body.vendedor_id);
 
-    if (!vendedor_id || !valor_total) {
-      return res.status(400).json({ error: "Campos vendedor_id e valor_total são obrigatórios" });
-    }
-
-    const novaVenda = await Venda.create({ vendedor_id, valor_total });
-    res.status(201).json(novaVenda);
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao registrar a venda", detalhes: error.message });
-  }
-});
-
-// Listar todas as vendas
-router.get("/listagem", async (req, res) => {
-  try {
-    const vendas = await Venda.findAll();
-    res.json(vendas);
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao listar vendas", detalhes: error.message });
-  }
-});
-
-// Registrar venda
-router.post("/registro", async (req, res) => {
-  try {
     const { frutaId, quantidade, desconto, valor_total, vendedor_id } = req.body;
 
-    if (!vendedor_id || !valor_total) {
-      return res.status(400).json({ error: "Campos vendedor_id e valor_total são obrigatórios." });
+    if (!vendedor_id || isNaN(vendedor_id) || !valor_total || !frutaId || !quantidade) {
+      return res.status(400).json({ error: "Todos os campos são obrigatórios." });
     }
 
     const fruta = await Fruta.findByPk(frutaId);
-    const vendedor = await Usuario.findByPk(vendedor_id);
-
     if (!fruta) {
       return res.status(404).json({ error: "Fruta não encontrada." });
     }
 
-    if (!vendedor || vendedor.perfil !== "Vendedor") {
-      return res.status(400).json({ error: "Vendedor inválido." });
+    const vendedor = await Usuario.findByPk(vendedor_id);
+    if (!vendedor) {
+      console.log("Vendedor não encontrado para o ID:", vendedor_id);
+      return res.status(400).json({ error: "Vendedor não encontrado." });
+    }
+
+    if (vendedor.perfil !== "Vendedor") {
+      return res.status(400).json({ error: "O usuário selecionado não é um vendedor." });
     }
 
     if (fruta.quantidade < quantidade) {
       return res.status(400).json({ error: "Estoque insuficiente." });
     }
 
-    // Atualizar estoque
-    fruta.quantidade -= quantidade;
-    await fruta.save();
+    const transaction = await sequelize.transaction();
 
-    // Registrar venda no banco
-    await Venda.create({
-      frutaId,
-      quantidade,
-      desconto,
-      valor_total,
-      vendedor_id
-    });
+    try {
+      fruta.quantidade -= quantidade;
+      await fruta.save({ transaction });
 
-    res.json({ message: "Venda realizada com sucesso!", frutaAtualizada: fruta });
+      const venda = await Venda.create({
+        vendedor_id,
+        valor_total,
+        data_hora: new Date()
+      }, { transaction });
+
+      await ItensVenda.create({
+        venda_id: venda.id,
+        fruta_id: frutaId,
+        quantidade,
+        preco_unitario: fruta.valor,
+        desconto
+      }, { transaction });
+
+      await transaction.commit();
+
+      res.json({ message: "Venda realizada com sucesso!", venda });
+    } catch (error) {
+      
+      await transaction.rollback();
+      console.error("Erro durante a transação:", error);
+      throw error;
+    }
   } catch (error) {
     console.error("Erro ao registrar venda:", error);
-    res.status(500).json({ error: "Erro ao registrar venda." });
+    res.status(500).json({ error: "Erro ao registrar venda.", detalhes: error.message });
   }
 });
-
-/* router.post("/vendas", async (req, res) => {
-  try {
-    const { frutaId, quantidade, desconto } = req.body;
-    const fruta = await Fruta.findByPk(frutaId);
-
-    if (!fruta) {
-      return res.status(404).json({ error: "Lamento, fruta não encontrada." });
-    }
-
-    if (fruta.quantidade < quantidade) {
-      return res.status(400).json({ error: "Estoque insuficiente." });
-    }
-
-    fruta.quantidade -= quantidade;
-    await fruta.save();
-
-    res.json({ message: "Venda realizada com sucesso!", frutaAtualizada: fruta });
-  } catch (error) {
-    res.status(500).json({ error: "Erro ao registrar venda." });
-  }
-}); */
 
 module.exports = router;

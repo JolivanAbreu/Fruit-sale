@@ -13,4 +13,4 @@ ItemVenda.belongsTo(Venda, { foreignKey: "vendaId" });
 Fruta.hasMany(ItemVenda, { foreignKey: "frutaId" });
 ItemVenda.belongsTo(Fruta, { foreignKey: "frutaId" });
 
-module.exports = { sequelize, Usuario, Fruta, Venda, ItemVenda };
+module.exports = { sequelize, Usuario, Fruta, Vendas, ItemVenda };
