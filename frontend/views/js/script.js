@@ -207,40 +207,42 @@ async function configurarVendaFrutas() {
     });
 }
 
-async function carregarVendas() {
-    try {
-        const response = await fetch("http://localhost:3000/venda/listar");
+document.addEventListener("DOMContentLoaded", function () {
+    async function carregarVendas() {
+        try {
+            const response = await fetch("http://localhost:3000/venda/listar");
 
-        if (!response.ok) {
-            throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+            if (!response.ok) {
+                throw new Error(`Erro na requisição: ${response.status} ${response.statusText}`);
+            }
+
+            const vendas = await response.json();
+            console.log("Resposta da API:", vendas);
+
+            if (!Array.isArray(vendas)) {
+                throw new Error("A resposta da API não é um array.");
+            }
+
+            const tabelaVendas = document.getElementById("tabela-vendas");
+            tabelaVendas.innerHTML = "";
+
+            vendas.forEach((venda) => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${venda.id}</td>
+                    <td>${venda.fruta}</td>
+                    <td>${venda.quantidade}</td>
+                    <td>${venda.desconto}%</td>
+                    <td>R$ ${venda.valor_final.toFixed(2)}</td>
+                    <td>${new Date(venda.data_hora).toLocaleString()}</td>
+                `;
+                tabelaVendas.appendChild(row);
+            });
+        } catch (error) {
+            console.error("Erro ao carregar vendas:", error);
+            alert("Erro ao carregar vendas: " + error.message);
         }
-
-        const vendas = await response.json();
-        console.log("Resposta da API:", vendas);
-
-        if (!Array.isArray(vendas)) {
-            throw new Error("A resposta da API não é um array.");
-        }
-
-        const tabelaVendas = document.getElementById("tabela-vendas");
-        tabelaVendas.innerHTML = "";
-
-        vendas.forEach((venda) => {
-            const row = document.createElement("tr");
-            row.innerHTML = `
-          <td>${venda.id}</td>
-          <td>${venda.fruta}</td>
-          <td>${venda.quantidade}</td>
-          <td>${venda.desconto}%</td>
-          <td>R$ ${venda.valor_final.toFixed(2)}</td>
-          <td>${new Date(venda.data_hora).toLocaleString()}</td>
-        `;
-            tabelaVendas.appendChild(row);
-        });
-    } catch (error) {
-        console.error("Erro ao carregar vendas:", error);
-        alert("Erro ao carregar vendas: " + error.message);
     }
-}
 
-
+    carregarVendas();
+});

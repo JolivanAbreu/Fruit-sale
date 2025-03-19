@@ -71,24 +71,23 @@ router.post("/registro", async (req, res) => {
   }
 });
 
-
 router.get("/listar", async (req, res) => {
   try {
     const vendas = await Venda.findAll({
-      include: [
-        {
-          model: ItensVenda,
-          as: "ItensVenda",
-          include: [{ model: Fruta, as: "Fruta", attributes: ["nome"] }],
-        },
-        {
-          model: Usuario,
-          as: "Usuario",
-          attributes: ["nome"],
-        },
-      ],
-      order: [["data_hora", "DESC"]],
-    });
+  include: [
+    {
+      model: ItensVenda,
+      as: "ItensVenda",
+      include: [{ model: Fruta, as: "Fruta", attributes: ["nome"] }],
+    },
+    {
+      model: Usuario,
+      as: "Usuario",
+      attributes: ["nome"],
+    },
+  ],
+  order: [["data_hora", "DESC"]],
+});
 
     const vendasFormatadas = vendas.map((venda) => {
       const itemVenda = venda.ItensVenda?.length ? venda.ItensVenda[0] : null;

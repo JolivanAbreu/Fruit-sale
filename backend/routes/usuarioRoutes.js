@@ -4,6 +4,8 @@ const jwt = require("jsonwebtoken");
 const Usuario = require("../models/Usuario");
 const router = express.Router();
 
+const SECRET_KEY = process.env.SECRET_KEY || "Jolivan";
+
 const gerarToken = (id, perfil) => {
   return jwt.sign({ id, perfil }, SECRET_KEY, { expiresIn: "1h" });
 };
